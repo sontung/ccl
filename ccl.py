@@ -108,13 +108,14 @@ def connected_component_labelling(bool_input_image, connectivity_type=CONNECTIVI
 	# 3rd Pass: flatten label list so labels are consecutive integers starting from 1 (in order 
 	# of top to bottom, left to right)
 	# Different implementation of disjoint-set may remove the need for 3rd pass?
+	indices_set = {du: [] for du in final_labels.values()}
 	for y, row in enumerate(labelled_image):
 		for x, pixel_value in enumerate(row):
 			
 			if pixel_value > 0: # Foreground pixel
-				labelled_image[y,x] = final_labels[pixel_value]
-
-	return labelled_image
+				labelled_image[y,x] = final_labels[pixel_value]*100
+				indices_set[final_labels[pixel_value]].append((y, x))
+	return labelled_image, indices_set
 
 
 
@@ -180,7 +181,7 @@ def print_image(image):
 def image_to_2d_bool_array(image):
 	im2 = image.convert('L')
 	arr = np.asarray(im2)
-	arr = arr != 255
+	arr = arr > 0
 
 	return arr
 	
